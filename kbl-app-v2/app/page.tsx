@@ -18,7 +18,7 @@ import { Logo } from "@/components/logo"
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background dark:bg-background">
+      <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-black">
         <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
           <div className="flex gap-2 items-center">
             <Logo />
@@ -27,14 +27,14 @@ export default function Home() {
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-2">
               <ThemeToggle />
-              <Link href="https://github.com/SakshamSehrawet/kbl-v1" target="_blank">
+              <Link href="https://github.com/SakshamSehrawet/kbl-v2.5" target="_blank">
                 <Button variant="ghost" size="icon">
                   <Github className="h-5 w-5" />
                   <span className="sr-only">GitHub</span>
                 </Button>
                 
               </Link>
-              <Link href="https://github.com/SakshamSehrawet/kbl-v1/blob/4ee06a9a6e237bed7c6dd68cd05c338536801055/kbl-app-v1/API_README.md" target="_blank">
+              <Link href="https://github.com/SakshamSehrawet/kbl-v2.5/blob/42e4c6d562ae727994f3c26c5733496acd537abc/kbl-app-v2/API_README.md" target="_blank">
                 <Button variant="ghost" size="icon">
                   <span className="h-5 w-5" >API</span>
                   <span className="sr-only">GitHub</span>
