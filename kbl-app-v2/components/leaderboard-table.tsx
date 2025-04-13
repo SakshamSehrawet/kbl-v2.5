@@ -34,16 +34,30 @@ export default function LeaderboardTable() {
       try {
         const data = await fetchLeaderboardData()
 
-        // Assign ranks, handling ties
-        const rankedData = data
-          .sort((a, b) => b.points - a.points) // Sort by points in descending order
-          .map((team, index, array) => ({
+        // Sort by points in descending order
+        const sortedData = [...data].sort((a, b) => b.points - a.points)
+
+        // Assign ranks, properly handling multi-way ties
+        let currentRank = 1
+        let currentPoints = -1
+        let sameRankCount = 0
+
+        const rankedData = sortedData.map((team, index) => {
+          // If this is a new points value, assign a new rank
+          if (team.points !== currentPoints) {
+            currentRank = index + 1
+            currentPoints = team.points
+            sameRankCount = 0
+          } else {
+            // This is a tie, keep the same rank
+            sameRankCount++
+          }
+
+          return {
             ...team,
-            rank:
-              index > 0 && team.points === array[index - 1].points
-                ? array[index - 1].rank // Keep same rank for ties
-                : index + 1,
-          }))
+            rank: currentRank,
+          }
+        })
 
         setLeaderboard(rankedData)
       } catch (error) {
