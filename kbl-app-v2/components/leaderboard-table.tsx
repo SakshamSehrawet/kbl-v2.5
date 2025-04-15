@@ -203,7 +203,11 @@ export default function LeaderboardTable() {
                     <AvatarFallback>{getInitials(entry.team)}</AvatarFallback>
                   </Avatar>
                   <div className="absolute -top-1 -right-1 rounded-full bg-background flex items-center justify-center w-6 h-6 border-2 border-background">
-                    <Star className={`h-3 w-3 text-${getMedalColor(entry.rank)}`} />
+                    <Star className={`h-4 w-4 ${entry.rank === 1
+            ? "text-yellow-500"
+            : entry.rank === 2
+            ? "text-slate-400"
+            : "text-amber-700"}`} />
                   </div>
                 </div>
                 <div>
