@@ -5,11 +5,12 @@ import { Trophy, ChevronUp, ChevronDown, Minus, Star, Share2, Camera  } from "lu
 import html2canvas from "html2canvas"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { fetchLeaderboardData } from "@/lib/sheets-api"
 
 import CommitGraph from "@/components/animata/graphs/commit-graph"
+import RankMedalIcon from "./ui/rank"
+import { Progress } from "./progress"
 interface LeaderboardEntry {
   rank: number
   team: string
@@ -78,7 +79,7 @@ export default function LeaderboardTable() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-slate-500"></div>
       </div>
     )
   }
@@ -101,7 +102,7 @@ export default function LeaderboardTable() {
   }
 
   const getRankChange = (current: number, previous?: number) => {
-    if (!previous || current === previous) return <Minus className="h-4 w-4 text-gray-400" />
+    if (!previous || current === previous) return <Minus className="h-4 w-4 text-slate-400" />
     return current < previous ? (
       <div className="flex items-center text-green-500">
         <ChevronUp className="h-6 w-6 mr-1" />
@@ -148,23 +149,51 @@ export default function LeaderboardTable() {
   // Get teams that rank 1, 2, or 3 (considering ties)
   const topTeams = leaderboard.filter((entry) => entry.rank <= 3)
 
+  // Group teams by rank to handle ties
+  const teamsByRank = topTeams.reduce(
+    (acc, team) => {
+      if (!acc[team.rank]) {
+        acc[team.rank] = []
+      }
+      acc[team.rank].push(team)
+      return acc
+    },
+    {} as Record<number, LeaderboardEntry[]>,
+  )
+
+  // Get medal color based on rank
+  const getMedalColor = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return "yellow-500"
+      case 2:
+        return "slate-400"
+      case 3:
+        return "amber-700"
+      default:
+        return "slate-300"
+    }
+  }
+
+  // Get max points for progress bar calculation
+  const maxPoints = Math.max(...leaderboard.map((entry) => entry.points))
+
   return (
     <div  className="space-y-6 bg-transparent hover:bg-transparent">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {topTeams.map((entry) => (
           <Card
             key={entry.team}
-            className={`overflow-hidden bg-transparent hover:bg-transparent ${entry.rank === 1 ? "border-yellow-500" : entry.rank === 2 ? "border-gray-400" : "border-amber-700"}`}
+            className={`overflow-hidden bg-gradient-to-tl from-background to-${getMedalColor(entry.rank)} bg-opacity-20 backdrop-blur-lg border-0`}
           >
-            <div className={`h-2 ${entry.rank === 1 ? "bg-yellow-500" : entry.rank === 2 ? "bg-gray-400" : "bg-amber-700"}`}></div>
             <CardContent className="pt-6 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 ">
                 <div className="relative">
                   <Avatar className={`h-12 w-12 ${getAvatarColor(entry.team)}`}>
                     <AvatarFallback>{getInitials(entry.team)}</AvatarFallback>
                   </Avatar>
                   <div className="absolute -top-1 -right-1 rounded-full bg-background flex items-center justify-center w-6 h-6 border-2 border-background">
-                    <Trophy className={`h-3 w-3 ${entry.rank === 1 ? "text-yellow-500" : entry.rank === 2 ? "text-gray-400" : "text-amber-700"}`} />
+                    <Star className={`h-3 w-3 text-${getMedalColor(entry.rank)}`} />
                   </div>
                 </div>
                 <div>
@@ -181,7 +210,6 @@ export default function LeaderboardTable() {
           </Card>
         ))}
       </div>
-
       <div ref={leaderboardRef} className="px-[2px]rounded-md border overflow-hidden">
         <Table>
           <TableHeader>
@@ -199,10 +227,10 @@ export default function LeaderboardTable() {
               const commitGraphData = getCommitGraphData(entry.matches)
 
               return (
-              <TableRow key={entry.team} className={entry.rank <= 3 ? "bg-muted/10" : ""}>
+              <TableRow key={entry.team} className={entry.rank <= 3 ? "bg-muted/10 " : ""}>
                 <TableCell className="font-medium">
                   <div className="flex items-center">
-                    {entry.rank <= 3 && <Trophy className={`h-5 w-5 mr-1 ${entry.rank === 1 ? "text-yellow-500" : entry.rank === 2 ? "text-gray-400" : "text-amber-700"}`} />}
+                    {entry.rank <= 3 && <Trophy className={`h-5 w-5 mr-1 text-${getMedalColor(entry.rank)}`} />}
                     {entry.rank}
                   </div>
                 </TableCell>
@@ -216,14 +244,25 @@ export default function LeaderboardTable() {
                         <span className="text-xs text-muted-foreground block">{entry.owner}</span>
                       </div>
                     </div>
+                    
                 </TableCell>
                 <TableCell className="text-center">
                   <div>
                     <span className="font-medium">{entry.points}</span>
                     <span className="text-xs text-muted-foreground block">{entry.matchesPlayed}</span>
                   </div>
+                  <div className="mt-2">
+                      <Progress
+                        value={(entry.points / maxPoints) * 100}
+                        className="h-1 bg-slate-200 dark:bg-slate-500 [&>div]:bg-slate-500 dark:[&>div]:bg-slate-100"
+                      />
+                    </div>
                 </TableCell>
-                <TableCell className="flex flex-col items-center justify-center">{getRankChange(entry.rank, entry.previousRank)}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    {getRankChange(entry.rank, entry.previousRank)}
+                  </div>
+                </TableCell>
                   <TableCell className="text-center font-bold relative">
                     <div className=" items-center justify-center overflow-hidden">
                     <CommitGraph data={commitGraphData} colorScheme="default" rank={entry.rank} />
