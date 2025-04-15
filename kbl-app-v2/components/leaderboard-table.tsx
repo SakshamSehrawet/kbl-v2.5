@@ -175,16 +175,26 @@ export default function LeaderboardTable() {
     }
   }
 
+  
+
   // Get max points for progress bar calculation
   const maxPoints = Math.max(...leaderboard.map((entry) => entry.points))
 
   return (
     <div  className="space-y-6 bg-transparent hover:bg-transparent">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {topTeams.map((entry) => (
+        {topTeams.map((entry) => {
+        const gradientColor =
+          entry.rank === 1
+            ? "to-yellow-500"
+            : entry.rank === 2
+            ? "to-slate-400"
+            : "to-amber-700";
+
+        return (
           <Card
             key={entry.team}
-            className={`overflow-hidden bg-gradient-to-tl from-background to-${getMedalColor(entry.rank)} bg-opacity-20 backdrop-blur-lg border-0`}
+            className={`overflow-hidden bg-gradient-to-t from-background ${gradientColor} bg-opacity-40 backdrop-blur-lg shadow-xl border-0`}
           >
             <CardContent className="pt-6 flex items-center justify-between">
               <div className="flex items-center gap-3 ">
@@ -208,7 +218,8 @@ export default function LeaderboardTable() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
       </div>
       <div ref={leaderboardRef} className="px-[2px]rounded-md border overflow-hidden">
         <Table>
