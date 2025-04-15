@@ -136,7 +136,8 @@ export default function LeaderboardTable() {
       for (let day = 0; day < rows; day++) {
         const matchNumber = week * rows + day + 1
         const match = matches.find((m) => m.match === matchNumber)
-        weekData.push(match ? Math.min(3, Math.floor(match.points / 3)) : 0)
+        //weekData.push(match ? Math.min(3, Math.floor(match.points / 3)) : 10000)
+        weekData.push(match ? match.points : 10000)
       }
       graphData.push(weekData)
     }

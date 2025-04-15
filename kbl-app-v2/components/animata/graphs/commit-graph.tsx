@@ -10,10 +10,21 @@ interface CommitGraphProps {
 const getColor = (count: number, colorScheme: "default" | "rank" = "default", rank = 0): string => {
   if (colorScheme === "default") {
     const colors: { [key: number]: string } = {
-      0: "bg-gray-300",
-      1: "bg-green-200",
-      2: "bg-green-400",
-      3: "bg-green-600",
+      
+      0: "bg-red-600",
+      10000: "border-2 border-red-300",
+      1: "bg-red-300",
+      2: "bg-red-100",
+      3: "bg-orange-200",
+      4: "bg-orange-100",
+      5: "bg-yellow-100",
+      6: "bg-green-100",
+      7: "bg-green-200",
+      8: "bg-green-300",
+      9: "bg-green-400",
+      10: "bg-green-500",
+      11: "bg-green-600",
+      12: "bg-green-700",
     }
     return colors[count] ?? "bg-green-700"
   } else {
@@ -21,12 +32,12 @@ const getColor = (count: number, colorScheme: "default" | "rank" = "default", ra
     if (rank <= 3) {
       // Gold gradient for top ranks
       const colors: { [key: number]: string } = {
-        0: "bg-yellow-100",
-        1: "bg-yellow-200",
-        2: "bg-yellow-300",
-        3: "bg-yellow-400",
+        0: "bg-green-100",
+        1: "bg-green-200",
+        2: "bg-green-300",
+        3: "bg-green-400",
       }
-      return colors[count] ?? "bg-yellow-500"
+      return colors[count] ?? "bg-green-500"
     } else if (rank <= 6) {
       // Silver gradient for middle ranks
       const colors: { [key: number]: string } = {

@@ -1,7 +1,7 @@
 # API Documentation for KBL Fantasy League
 
 ## Base URL
-`https://kbl-v1.vercel.app/api/`
+`https://kbl-v2.vercel.app/api/`
 
 ## Endpoints
 
