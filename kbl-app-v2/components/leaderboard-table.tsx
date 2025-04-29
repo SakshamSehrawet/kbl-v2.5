@@ -122,7 +122,7 @@ export default function LeaderboardTable() {
       return [Array(7).fill(0)]
     }
 
-    const rows = 3;
+    const rows = 5;
 
     // Create a 2D array for the commit graph
     // We'll use a single row with points data
